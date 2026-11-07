@@ -95,13 +95,16 @@ payrollRouter.get('/report', adminOnly, (req, res) => {
     offDays[date] = date in overrides ? overrides[date] : weeks.includes(weekOfMonth(date));
   }
 
+  const todayIso = today();
   const rows = employees.map((employee) => {
-    const mine = records.filter((record) => record.employee_id === employee.id && record.out_min != null);
+    const mine = records.filter((record) => record.employee_id === employee.id);
     const onLeave = (date) =>
       leave.some((l) => l.employee_id === employee.id && l.from_date <= date && date <= l.to_date);
 
     const days = dates.map((date) => {
       const record = mine.find((item) => item.date === date);
+      // A day that has not finished yet is not an absence.
+      if (!record && date >= todayIso) return { date, mark: '', units: 0 };
       return {
         date,
         mark: dayMark(record, { onLeave: onLeave(date), sundayOff: offDays[date] }),

@@ -123,8 +123,12 @@ export default function Report() {
                       key={day.date}
                       className={`${MARK_CLASS[day.mark] || ''} ${day.mark === 'S' ? 'sun' : 'cell'}`}
                       onClick={() => {
-                        if (day.mark === 'S') toggleSunday(day.date);
-                        else setEditing({ employeeId: row.employeeId, date: day.date, units: day.units });
+                        if (day.mark === 'S') {
+                          toggleSunday(day.date);
+                          return;
+                        }
+                        if (day.date > todayISO()) return;
+                        setEditing({ employeeId: row.employeeId, date: day.date, units: day.units });
                       }}
                       title={isEditing ? '' : `${row.name} · ${day.date}`}
                     >

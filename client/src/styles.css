@@ -272,7 +272,7 @@ input[type='number'] { font-family: var(--f-mono); }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 14px; }
 .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); display: grid; gap: 4px; }
 .tile .ti { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--tc) 14%, transparent); color: var(--tc); margin-bottom: 6px; }
-.tile b { font-family: var(--f-head); font-weight: 800; font-size: 2rem; line-height: 1.05; }
+.tile b { font-family: var(--f-head); font-weight: 800; font-size: 2rem; line-height: 1.05; font-variant-numeric: lining-nums tabular-nums; }
 .tile b small { font-size: 1rem; color: var(--muted); font-weight: 600; }
 .tile.alert { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 
@@ -313,7 +313,7 @@ td input.sm, .pend input { width: 88px; padding: 6px 8px; }
 .seg button.on { background: var(--primary); color: var(--primary-ink); }
 
 .pay { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
-.pay .big { font-family: var(--f-head); font-weight: 800; font-size: 2rem; line-height: 1; }
+.pay .big { font-family: var(--f-head); font-weight: 800; font-size: 2rem; line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
 .formula { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
 .code { font-family: var(--f-mono); font-size: 1.5rem; letter-spacing: 0.12em; font-weight: 500; background: var(--field); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; display: inline-block; }
 .note { font-size: 0.8rem; color: var(--muted); margin-top: 22px; border-top: 1px solid var(--line); padding-top: 12px; }
@@ -354,7 +354,7 @@ table.mx td.sun { cursor: pointer; }
 table.mx td.cell { cursor: pointer; }
 table.mx td.cell:hover { background: var(--accent-soft); }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 0.76rem; color: var(--muted); }
-.legend b { font-family: var(--f-mono); margin-right: 3px; }
+.legend b { font-family: var(--f-mono); margin-right: 6px; }
 .legend .P { color: var(--good); } .legend .H { color: var(--warn); } .legend .D { color: var(--t-design); }
 .legend .L { color: var(--t-polish); } .legend .A { color: var(--bad); } .legend .S { color: var(--muted); }
 
@@ -382,7 +382,7 @@ table.mx td.cell:hover { background: var(--accent-soft); }
 .bn.on::before { content: ''; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 4px 4px; background: var(--accent); }
 .hero { background: linear-gradient(150deg, var(--deep), var(--primary)); color: #f2f5fc; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 6px; }
 .hero .cap { color: #aeb9d6; }
-.clock { font-family: var(--f-head); font-weight: 800; font-size: clamp(2.5rem, 12vw, 3.4rem); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.clock { font-family: var(--f-head); font-weight: 800; font-size: clamp(2.5rem, 12vw, 3.4rem); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: lining-nums tabular-nums; }
 .hero .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
 .gates { display: grid; }
 .gate { display: flex; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--line); }

@@ -251,6 +251,7 @@ attendanceRouter.put('/cell', adminOnly, (req, res) => {
     return res.status(404).json({ error: 'Employee not found.' });
   }
   if (!isValidDate(date)) return res.status(400).json({ error: 'Invalid date.' });
+  if (date > today()) return res.status(400).json({ error: 'Attendance cannot be set for a future date.' });
   if (!Number.isFinite(units) || units < 0 || units > 3) {
     return res.status(400).json({ error: 'Days must be between 0 and 3.' });
   }

@@ -55,9 +55,7 @@ export const summarise = (records, { approvedOnly = false } = {}) => {
 /** The one-letter mark used by the monthly attendance matrix. */
 export const dayMark = (record, { onLeave, sundayOff }) => {
   if (onLeave) return 'L';
-  if (record && record.out_min != null) {
-    return DAY_TYPES[record.day_type]?.short ?? 'P';
-  }
+  if (record) return DAY_TYPES[record.day_type]?.short ?? 'P';
   if (sundayOff) return 'S';
   return 'A';
 };
