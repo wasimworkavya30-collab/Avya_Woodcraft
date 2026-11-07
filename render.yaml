@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: avya-attendance
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: avya-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: PORT
+        value: 4000
+      - key: DATABASE_FILE
+        value: /data/avya.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@avyawoodcraft.in
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Set these to the workshop's real coordinates before testing on a phone.
+      - key: WORKSHOP_LAT
+        value: 17.3850
+      - key: WORKSHOP_LNG
+        value: 78.4867
+      - key: GEOFENCE_METRES
+        value: 150
+      - key: SEED_DEMO
+        value: true
