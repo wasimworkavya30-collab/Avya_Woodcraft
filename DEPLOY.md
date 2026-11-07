@@ -1,5 +1,25 @@
 # Deploying the app
 
+## Step by step, no experience needed
+
+1. Go to <https://render.com> and press **Get Started**. Choose **GitHub** and log in with the
+   GitHub account that owns this repository. No card is needed for the free plan.
+2. Press the **Deploy on Render** button (or in Render: **New → Blueprint**), pick the
+   `Avya_Woodcraft` repository and the `main` branch.
+3. Render reads `render.yaml` and asks for one value: **ADMIN_PASSWORD**. Type the password you
+   want for the admin console (`admin@avyawoodcraft.in`).
+4. Press **Apply** / **Create**. The first build takes about 5–8 minutes (`npm ci`, `npm run build`).
+5. When the status turns **Live**, copy the URL shown at the top, something like
+   `https://avya-attendance-xxxx.onrender.com`. Open it — you should see the sign-in page.
+6. Sign in as Admin with `admin@avyawoodcraft.in` and the password from step 3.
+7. On your phone, open the same URL and sign in as the employee (`AW-104` / `1234`).
+
+Free plan notes: the service sleeps after ~15 minutes of no traffic, so the next visit takes
+about a minute to wake, and the database resets when it restarts (demo data is loaded again
+automatically). For real use, switch to the `starter` plan and add the disk as described at the
+bottom of `render.yaml`.
+
+## How the app is hosted
 The app is a three-tier Node service: React build served by Express, data in a SQLite file.
 That means it needs a host that runs a long-lived Node process **and** keeps a disk between
 restarts. Serverless/edge platforms (Vercel functions, Cloudflare Workers, Netlify functions)

@@ -2,21 +2,17 @@ services:
   - type: web
     name: avya-attendance
     runtime: node
-    plan: starter
+    # Free plan: no card needed, but the SQLite file resets when the service
+    # restarts or wakes from sleep. See DEPLOY.md to switch to a persistent disk.
+    plan: free
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
-    disk:
-      name: avya-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: NODE_VERSION
         value: 22.11.0
-      - key: PORT
-        value: 4000
       - key: DATABASE_FILE
-        value: /data/avya.db
+        value: data/avya.db
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL
@@ -32,3 +28,12 @@ services:
         value: 150
       - key: SEED_DEMO
         value: true
+
+# To keep employees, punches and paired phones between restarts:
+#   1. change `plan: free` above to `plan: starter` (paid, ~$7/month)
+#   2. add under startCommand:
+#        disk:
+#          name: avya-data
+#          mountPath: /data
+#          sizeGB: 1
+#   3. change DATABASE_FILE to /data/avya.db
