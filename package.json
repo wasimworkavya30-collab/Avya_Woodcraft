@@ -1,0 +1,26 @@
+{
+  "name": "avya-woodcraft-attendance",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Avya Woodcraft LLP attendance, payroll and workshop operations app (React + Express + SQLite)",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run seed",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "seed": "npm --workspace server run seed",
+    "smoke": "node scripts/smoke.mjs",
+    "build": "npm --workspace client run build",
+    "start": "npm --workspace server run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}

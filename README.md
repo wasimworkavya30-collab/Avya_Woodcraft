@@ -66,6 +66,98 @@ This GitHub space holds our tools and technical work:
 
 ---
 
+## 📱 Attendance & Payroll Web App
+
+A complete three-tier web application for the workshop: employees punch in from the authorized company phone, admins approve hours, and the app produces the monthly salary report. It replaces the earlier single-file HTML demo — every record now lives in a database on the server, so the admin phone, managers and employees all see the same live data.
+
+### 🧱 Three-tier architecture
+
+```
+┌─────────────────────────────┐
+│  Presentation tier          │  React 18 + Vite, react-router
+│  client/                    │  Admin console + employee mobile app
+└──────────────┬──────────────┘
+               │  REST / JSON  ·  JWT bearer token
+┌──────────────▼──────────────┐
+│  Application tier           │  Node.js + Express, business rules
+│  server/                    │  auth, geofence, approvals, payroll
+└──────────────┬──────────────┘
+               │  SQL (prepared statements)
+┌──────────────▼──────────────┐
+│  Data tier                  │  SQLite (built into Node 22.5+)
+│  server/src/schema.sql      │  20 tables, foreign keys, WAL mode
+└─────────────────────────────┘
+```
+
+### ✨ What it does
+
+| Area | Features |
+|---|---|
+| **Attendance** | Check in / check out with selfie, 150 m workshop geofence, one authorized company phone, blocked-attempt log, pairing codes |
+| **Approvals** | Day type (full / half / double / custom) and hours per shift, approve one or all; only approved hours are payable |
+| **Payroll** | Monthly salary report = approved hours × rate, advance deductions, monthly attendance matrix with Sunday-off policy |
+| **People** | Employees, soft remove / restore, photos, PINs, teams, org chart, team leaders, leave requests |
+| **Work log** | Daily work per employee (task, item, hours) with overtime and missing-log warnings |
+| **Operations** | Product costing, petty cash book, inventory with low-stock alerts, material requests, production stages |
+| **Security** | JWT sessions, bcrypt password/PIN hashes, role checks on every endpoint, admin-only routes |
+| **Backup** | Full JSON export / import and scoped resets |
+
+### 🚀 Run it locally
+
+```bash
+# Node 22.5 or newer (uses the SQLite engine built into Node)
+npm install
+cp .env.example .env      # then change JWT_SECRET and the admin password
+npm run seed              # optional: reload the sample workshop data
+npm run dev               # API on :4000, web on :5173
+```
+
+Open http://localhost:5173
+
+| Login | Credentials |
+|---|---|
+| Admin | `admin@avyawoodcraft.in` / `Avya@2026` (from `.env`) |
+| Employee | code `AW-101` … `AW-116`, PIN `1234` |
+
+Production (single port, API serves the built app):
+
+```bash
+npm run build && npm start     # http://localhost:4000
+```
+
+### 🔌 API surface
+
+`/api/auth` · `/api/employees` · `/api/teams` · `/api/attendance` · `/api/work` · `/api/leave` · `/api/payroll` · `/api/devices` · `/api/settings` · `/api/dashboard` · `/api/ops` · `/api/backup`
+
+`npm run smoke` runs 30 end-to-end checks against a running API (login, punch gate, geofence, approvals, payroll, leave, material requests, permissions).
+
+### 🔐 Before using real data
+
+- Change `JWT_SECRET` and `ADMIN_PASSWORD` in `.env`.
+- Set `WORKSHOP_LAT` / `WORKSHOP_LNG` to the real workshop gate.
+- Serve the app over HTTPS — the browser only shares location and camera on a secure origin.
+- Pair the company phone from **Devices → Generate pairing code**.
+
+<details>
+<summary>Project layout</summary>
+
+```
+client/            React app (presentation tier)
+  src/pages/admin  overview, approvals, work log, employees, teams, leave,
+                   salary, monthly report, devices, costing, petty, inventory,
+                   production, data & backup
+  src/pages/employee  today (punch), work, material, hours, leave
+server/            Express API (application tier)
+  src/routes       one router per domain
+  src/lib          payroll rules, date maths, device + geofence helpers
+  src/schema.sql   SQLite schema (data tier)
+scripts/smoke.mjs  end-to-end API test
+```
+
+</details>
+
+---
+
 <div align="center">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:D2A679,50:8B5A2B,100:3E2723&height=120&section=footer" alt="footer" />
