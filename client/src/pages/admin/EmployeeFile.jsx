@@ -9,6 +9,7 @@ import {
   Loading,
   MonthNav,
   Tile,
+  clock12,
   hours as fmtHours,
   money,
   prettyDate,
@@ -152,7 +153,7 @@ export default function EmployeeFile() {
                   <tr key={record.id}>
                     <td>{prettyDate(record.date)}</td>
                     <td className="mono small">
-                      {record.inMin} → {record.outMin ?? 'open'}
+                      {clock12(record.inMin)} → {record.outMin == null ? 'open' : clock12(record.outMin)}
                     </td>
                     <td>{record.dayType}</td>
                     <td className="r mono">{record.outMin == null ? '–' : fmtHours(record.hours)}</td>
