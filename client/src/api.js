@@ -39,11 +39,21 @@ async function request(path, { method = 'GET', body, raw = false } = {}) {
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(`/api${path}`, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let response;
+  try {
+    response = await fetch(`/api${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      // A request that never settles would leave buttons spinning forever.
+      signal: AbortSignal.timeout(20000),
+    });
+  } catch (err) {
+    if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+      throw new ApiError('The server is not responding. Check the connection and try again.', 0, null);
+    }
+    throw new ApiError('Cannot reach the server. Check the connection and try again.', 0, null);
+  }
 
   if (response.status === 401 && token) {
     setToken('');

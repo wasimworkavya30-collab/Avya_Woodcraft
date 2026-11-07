@@ -78,6 +78,7 @@ export default function TodayView({ employee }) {
   const [settings, setSettings] = useState(null);
   const [coords, setCoords] = useState(null);
   const [locationError, setLocationError] = useState('');
+  const [locating, setLocating] = useState(true);
   const [simulate, setSimulate] = useState(false);
   const [selfie, setSelfie] = useState(null);
   const [pairCode, setPairCode] = useState('');
@@ -112,17 +113,37 @@ export default function TodayView({ employee }) {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
+  const locate = useCallback(() => {
     if (!navigator.geolocation) {
+      setLocating(false);
       setLocationError('Location is not available in this browser.');
-      return;
+      return undefined;
     }
+    setLocating(true);
+    setLocationError('');
+    // Browsers can leave the request pending forever behind a blocked prompt.
+    const watchdog = setTimeout(() => {
+      setLocating(false);
+      setLocationError('Location is not responding. Allow location access, or use practice mode.');
+    }, 12000);
     navigator.geolocation.getCurrentPosition(
-      (position) => setCoords({ lat: position.coords.latitude, lng: position.coords.longitude }),
-      () => setLocationError('Allow location access to punch from the workshop.'),
-      { enableHighAccuracy: true, timeout: 8000 },
+      (position) => {
+        clearTimeout(watchdog);
+        setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setLocationError('');
+        setLocating(false);
+      },
+      () => {
+        clearTimeout(watchdog);
+        setLocating(false);
+        setLocationError('Allow location access to punch from the workshop.');
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
     );
+    return () => clearTimeout(watchdog);
   }, []);
+
+  useEffect(() => locate(), [locate]);
 
   const todayRecord = records.find((record) => new Date(`${record.date}T00:00:00`).toDateString() === now.toDateString());
   const open = todayRecord && todayRecord.outMin == null;
@@ -183,6 +204,16 @@ export default function TodayView({ employee }) {
 
   const status = open ? 'On shift' : todayRecord ? 'Attendance done' : 'Not checked in';
 
+  const blockedReason = !device
+    ? 'Checking this phone…'
+    : !device.authorized
+      ? 'Pair this phone before you can check in.'
+      : !locationOk
+        ? 'Location must be inside the workshop gate.'
+        : !selfie
+          ? 'Add a selfie for this punch.'
+          : '';
+
   return (
     <div className="stack">
       <Toast message={toast.message} error={toast.error} />
@@ -224,8 +255,15 @@ export default function TodayView({ employee }) {
                   ? 'Practice mode: sending 42 m from the workshop.'
                   : distance != null
                     ? `${distance} m from the workshop gate. Limit is ${limit} m.`
-                    : locationError || 'Finding your location…'}
+                    : locating
+                      ? 'Finding your location…'
+                      : locationError || 'Location unavailable.'}
               </span>
+              {!simulate && distance == null && !locating ? (
+                <button type="button" className="btn sm ghost" style={{ marginTop: 6 }} onClick={locate}>
+                  Retry location
+                </button>
+              ) : null}
             </div>
           </div>
           <div className={`gate ${selfie ? 'ok' : ''}`}>
@@ -308,6 +346,12 @@ export default function TodayView({ employee }) {
           Check in
         </button>
       )}
+
+      {(open || !todayRecord) && blockedReason ? (
+        <p className="small muted" style={{ margin: 0, textAlign: 'center' }}>
+          {blockedReason}
+        </p>
+      ) : null}
 
       <div className="card">
         <div className="head-row">
