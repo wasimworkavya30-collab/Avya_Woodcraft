@@ -10,7 +10,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
-        value: 22.11.0
+        value: 22
       - key: DATABASE_FILE
         value: data/avya.db
       - key: JWT_SECRET
